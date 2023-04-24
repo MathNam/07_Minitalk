@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   format_error.c                                     :+:      :+:    :+:   */
+/*   ft_format_error.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maaliber <maaliber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 15:50:49 by maaliber          #+#    #+#             */
-/*   Updated: 2023/02/02 15:36:11 by maaliber         ###   ########.fr       */
+/*   Updated: 2023/04/17 16:14:47 by maaliber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	err_msg_ptf(char *msg, int c)
+void	err_msg(char *msg, int c)
 {
 	write(1, BRED, 9);
 	write(1, "error: ", 7);
@@ -30,18 +30,18 @@ void	err_msg_ptf(char *msg, int c)
 
 int	flag_comp_err(t_arg_spec *spec)
 {
-	if (spec->param->alt && !ft_ischarset(spec->type, "xX"))
-		return (err_msg_ptf("'#' flag used with", spec->type), 1);
-	else if (spec->param->space && !ft_ischarset(spec->type, "sdi"))
-		return (err_msg_ptf("' ' flag used with", spec->type), 1);
-	else if (spec->param->showsign && !ft_ischarset(spec->type, "di"))
-		return (err_msg_ptf("'+' flag used with", spec->type), 1);
-	else if (spec->param->prec >= 0 && !ft_ischarset(spec->type, "sdiuxX"))
-		return (err_msg_ptf("precision used with", spec->type), 1);
+	if (spec->param.alt && !ft_ischarset(spec->type, "xX"))
+		return (err_msg("'#' flag used with", spec->type), 1);
+	else if (spec->param.space && !ft_ischarset(spec->type, "sdi"))
+		return (err_msg("' ' flag used with", spec->type), 1);
+	else if (spec->param.showsign && !ft_ischarset(spec->type, "di"))
+		return (err_msg("'+' flag used with", spec->type), 1);
+	else if (spec->param.prec >= 0 && !ft_ischarset(spec->type, "sdiuxX"))
+		return (err_msg("precision used with", spec->type), 1);
 	return (0);
 }
 
-void	flag_err_msg_printf(int errno)
+void	flag_err_msg(int errno)
 {
 	write(1, BRED, 9);
 	write(1, "error: ", 7);
@@ -66,22 +66,22 @@ void	flag_err_msg_printf(int errno)
 
 int	flag_error(t_arg_spec *spec)
 {
-	if (spec->param->alt > 1)
-		return (flag_err_msg_printf(1), 1);
-	else if (spec->param->left > 1)
-		return (flag_err_msg_printf(2), 1);
-	else if (spec->param->padded > 1)
-		return (flag_err_msg_printf(3), 1);
-	else if (spec->param->showsign > 1)
-		return (flag_err_msg_printf(4), 1);
-	else if (spec->param->space > 1)
-		return (flag_err_msg_printf(5), 1);
-	else if (spec->param->left && spec->param->padded)
-		return (flag_err_msg_printf(6), 1);
-	else if (spec->param->showsign && spec->param->space)
-		return (flag_err_msg_printf(7), 1);
-	else if (spec->param->prec >= 0 && spec->param->padded)
-		return (flag_err_msg_printf(8), 1);
+	if (spec->param.alt > 1)
+		return (flag_err_msg(1), 1);
+	else if (spec->param.left > 1)
+		return (flag_err_msg(2), 1);
+	else if (spec->param.padded > 1)
+		return (flag_err_msg(3), 1);
+	else if (spec->param.showsign > 1)
+		return (flag_err_msg(4), 1);
+	else if (spec->param.space > 1)
+		return (flag_err_msg(5), 1);
+	else if (spec->param.left && spec->param.padded)
+		return (flag_err_msg(6), 1);
+	else if (spec->param.showsign && spec->param.space)
+		return (flag_err_msg(7), 1);
+	else if (spec->param.prec >= 0 && spec->param.padded)
+		return (flag_err_msg(8), 1);
 	return (0);
 }
 
@@ -90,10 +90,10 @@ int	ft_format_error(t_lst_arg *arg, char *sup_types)
 	while (arg)
 	{
 		if (arg->spec->type == 0)
-			return (err_msg_ptf("spurious trailing ‘%’ in format", 0), 1);
+			return (err_msg("spurious trailing ‘%’ in format", 0), 1);
 		if (ft_index(sup_types, arg->spec->type) < 0)
 		{
-			err_msg_ptf("unknown conversion type character", arg->spec->type);
+			err_msg("unknown conversion type character", arg->spec->type);
 			return (1);
 		}
 		if (flag_comp_err(arg->spec))

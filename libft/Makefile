@@ -4,6 +4,7 @@
 
 # Name
 NAME = libft.a
+PROJECT_NAME = Libft
 
 #______________________________________________________________________________#
 ############################### Compiler #######################################
@@ -32,25 +33,35 @@ CYAN = \033[0;36m
 BLACK = \033[0;30
 WHITE = \033[0;37m
 
-# Colors
+# Bold
 BYELLOW = \033[1;33m
 BGREEN = \033[1;32m
 BBLUE = \033[1;34m
 BRED = \033[1;31m
 BPURPLE = \033[1;35m
 BCYAN = \033[1;36m
-BBLACK = \033[1;30
+BBLACK = \033[1;30m
 BWHITE = \033[1;37m
 
+# Background
+On_Black = \033[40m       # Black
+On_Red = \033[41m         # Red
+On_Green = \033[42m       # Green
+On_Yellow = \033[43m      # Yellow
+On_Blue = \033[44m        # Blue
+On_Purple = \033[45m      # Purple
+On_Cyan = \033[46m        # Cyan
+On_White = \033[47m       # White
+
 # One Line Output
-ONELINE =\e[1A\r\r
+OL =\e[1A\r\033[K
 
 #______________________________________________________________________________#
 ############################### Includes #######################################
 #‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-INCLUDES = inc/
-I_INCLUDES += -I $(INCLUDES)
+INC_DIR = ./inc
+INCLUDES += -I $(INC_DIR)
 
 #______________________________________________________________________________#
 ############################### Headers ########################################
@@ -58,20 +69,20 @@ I_INCLUDES += -I $(INCLUDES)
 
 HEADER += libft.h
 
-vpath %.h $(INCLUDES)
+vpath %.h $(INC_DIR)
 
 #______________________________________________________________________________#
 ############################### Path Sources ###################################
 #‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-SRCS_DIR = srcs/
-PATH_SRCS_CTYPE = $(SRCS_DIR)ctype
-PATH_SRCS_STR = $(SRCS_DIR)str
-PATH_SRCS_MEM = $(SRCS_DIR)mem
-PATH_SRCS_IO = $(SRCS_DIR)io
-PATH_SRCS_STD = $(SRCS_DIR)std
-PATH_SRCS_PRINTF = $(SRCS_DIR)io/ftprintf
-PATH_SRCS_GNL = $(SRCS_DIR)gnl
+SRCS_DIR = ./srcs
+PATH_SRCS_CTYPE = $(SRCS_DIR)/ctype
+PATH_SRCS_STR = $(SRCS_DIR)/str
+PATH_SRCS_MEM = $(SRCS_DIR)/mem
+PATH_SRCS_IO = $(SRCS_DIR)/io
+PATH_SRCS_STD = $(SRCS_DIR)/std
+PATH_SRCS_PRINTF = $(SRCS_DIR)/io/ftprintf
+PATH_SRCS_GNL = $(SRCS_DIR)/gnl
 
 #______________________________________________________________________________#
 ############################### SOURCES ########################################
@@ -127,22 +138,21 @@ SRCS += ft_itoa.c
 SRCS += ft_split.c
 
 # ft_printf
-SRCS += conversion.c
-SRCS += format_error.c
 SRCS += list_ft.c
+SRCS += ft_printf_util.c
+SRCS += parse_format.c
+SRCS += format_error.c
+SRCS += conversion.c
 SRCS += mod_p1.c
 SRCS += mod_p2.c
 SRCS += output.c
-SRCS += parse_format.c
 SRCS += process_arg_p1.c
 SRCS += process_arg_p2.c
-SRCS += ft_printf_util.c
 SRCS += ft_printf.c
 
 # get_next_line
-SRCS += get_next_line.c
 SRCS += get_next_line_util.c
-
+SRCS += get_next_line.c
 
 #______________________________________________________________________________#
 ############################### Attribution ####################################
@@ -160,8 +170,8 @@ vpath %.c $(PATH_SRCS_GNL)
 ############################### Objects ########################################
 #‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-OBJS_DIR = objs/
-OBJS = $(patsubst %.c, $(OBJS_DIR)%.o, $(SRCS))
+OBJS_DIR = ./objs
+OBJS = $(patsubst %.c, $(OBJS_DIR)/%.o, $(SRCS))
 
 #______________________________________________________________________________#
 ############################### Counter ########################################
@@ -174,32 +184,44 @@ COUNT	= 0
 ############################### Rules ##########################################
 #‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-all: $(OBJS_DIR) $(NAME) 
+#_____Build_____#
+all: where $(OBJS_DIR) $(NAME)
+	@echo "--▶ $(BGREEN)all\t$(GREEN)done$(NC)"
+	@echo "--------------------------------------------------"
 
 $(NAME): $(OBJS) 
 	@ar rcs $@ $^
-	@printf "$(ONELINE)$(BCYAN)💿 [%2d/%2d]\t$(CYAN)All files compiled [%d%%]" $(COUNT) $(TOTAL) $(PERCENT)
-	@echo -n "                                                                     \n$(NC)"
-	@echo -n "$(BGREEN)📖 $(NAME)\t$(GREEN)Library created ✅\n$(NC)"
+    #-----Output-----#
+	@printf "$(OL)$(BCYAN)[%2d/%2d] %3d%%\t$(CYAN)All files compiled\n$(NC)" $(COUNT) $(TOTAL) $(PERCENT)
+	@echo "▶ $(BGREEN)$(NAME)\t$(GREEN)Library created$(NC)"
 
-$(OBJS): $(OBJS_DIR)%.o: %.c $(HEADER)
+$(OBJS): $(OBJS_DIR)/%.o: %.c
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+    #-----Output-----#
 	@if [ $(COUNT) = 0 ]; then echo ""; fi
-	@$(CC) $(CFLAGS) $(I_INCLUDES) -c $< -o $@
 	@$(eval COUNT=$(shell echo $$(($(COUNT)+1))))
 	@$(eval PERCENT:=$(shell echo $$((100*$(COUNT)/$(TOTAL)))))
-	@printf "$(ONELINE)$(BCYAN)💿 [%2d/%2d]\t$(CYAN)Compiling %-40s\t[%d%%]" $(COUNT) $(TOTAL) $< $(PERCENT)
-	@echo -n "                                                                     \n$(NC)"
+	@printf "$(OL)$(BCYAN)[%2d/%2d] %3d%%\t$(CYAN)Compiling %s$(NC)\n" $(COUNT) $(TOTAL) $(PERCENT) $< 
 
 $(OBJS_DIR):
 	@mkdir $@
 
-clean:
+#_____Clean_____#
+clean: where
 	@rm -rf $(OBJS_DIR)
-	@echo -n "$(BYELLOW)📄 clean\t$(YELLOW)Object files removed from libft ❌\n$(NC)"
+    #-----Output-----#
+	@echo "▶ $(BYELLOW)clean\t$(YELLOW)Object files removed from $(PROJECT_NAME)$(NC)"
+	@echo "--▶ $(BYELLOW)clean$(YELLOW) done$(NC)"
 
 fclean: clean
 	@rm -f $(NAME)
-	@echo -n "$(BRED)📖 fclean\t$(RED)Library removed ❌\n$(NC)"
+    #-----Output-----#
+	@echo "▶ $(BRED)fclean\t$(RED)Library removed$(NC)"
+	@echo "--▶ $(BRED)fclean$(RED) done$(NC)"
+
+# Current Make
+where:
+	@echo "$(BBLACK)>$(PROJECT_NAME)$(NC)"
 
 re: fclean all
 

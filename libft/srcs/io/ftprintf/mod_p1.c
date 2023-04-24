@@ -6,7 +6,7 @@
 /*   By: maaliber <maaliber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 17:27:56 by maaliber          #+#    #+#             */
-/*   Updated: 2023/02/02 15:36:28 by maaliber         ###   ########.fr       */
+/*   Updated: 2023/04/17 16:14:47 by maaliber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ void	ctype_mod(t_output *output, t_arg_spec *spec)
 	char	*mod_c;
 	ssize_t	add_size;
 
-	add_size = spec->param->width - output->size;
+	add_size = spec->param.width - output->size;
 	if (add_size > 0)
 	{
 		mod_c = ft_setalloc(sizeof(char) * add_size + 1, ' ', 0);
 		if (!mod_c)
 			return ;
-		if (spec->param->left)
+		if (spec->param.left)
 			mod_c[0] = *(output->to_print);
 		else
 			mod_c[add_size] = *(output->to_print);
@@ -35,7 +35,7 @@ void	ctype_mod(t_output *output, t_arg_spec *spec)
 
 void	s_null_case(t_output *output, t_arg_spec *spec)
 {
-	if (spec->param->prec < 0 || spec->param->prec > 5)
+	if (spec->param.prec < 0 || spec->param.prec > 5)
 		output->to_print = ft_strdup("(null)");
 	else
 		output->to_print = ft_strdup("");
@@ -48,16 +48,16 @@ void	prec_smod(t_output *output, t_arg_spec *spec)
 	char	*tr_str;
 	int		i;
 
-	if (!(output->to_print))
+	if (!output->to_print)
 		return (s_null_case(output, spec), (void)0);
 	len = ft_strlen(output->to_print);
-	if (len < spec->param->prec || spec->param->prec < 0)
+	if (len < spec->param.prec || spec->param.prec < 0)
 		return ;
-	tr_str = malloc(spec->param->prec + 1);
+	tr_str = malloc(spec->param.prec + 1);
 	if (!tr_str)
 		return ;
 	i = 0;
-	while (i < spec->param->prec && i < len)
+	while (i < spec->param.prec && i < len)
 	{
 		tr_str[i] = (output->to_print)[i];
 		i++;
@@ -65,7 +65,7 @@ void	prec_smod(t_output *output, t_arg_spec *spec)
 	tr_str[i] = 0;
 	free(output->to_print);
 	output->to_print = tr_str;
-	output->size = spec->param->prec;
+	output->size = spec->param.prec;
 }
 
 void	prec_nmod(t_output *output, t_arg_spec *spec)
@@ -73,16 +73,16 @@ void	prec_nmod(t_output *output, t_arg_spec *spec)
 	char	*add;
 	ssize_t	add_size;
 
-	if (spec->param->prec < 0)
+	if (!output->to_print || spec->param.prec < 0)
 		return ;
-	if (spec->param->prec == 0 && *(output->to_print) == '0')
+	if (spec->param.prec == 0 && *(output->to_print) == '0')
 	{
 		free(output->to_print);
 		output->to_print = ft_strdup("");
 		output->size = 0;
 		return ;
 	}
-	add_size = spec->param->prec - output->size;
+	add_size = spec->param.prec - output->size;
 	if (*(output->to_print) == '-')
 		add_size++;
 	if (add_size > 0)

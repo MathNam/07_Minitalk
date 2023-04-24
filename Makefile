@@ -1,126 +1,178 @@
-#Compiler and Linker
-CC          = cc
+#______________________________________________________________________________#
+############################### Target Names ###################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-#Target .exe
+# Name
+PROJECT_NAME = Minitalk
 SERVER		= server
 CLIENT		= client
 
-#Directories, Source, Objects, Lib
-SRCS_DIR		= srcs/
-OBJS_DIR		= objs/
-LIB_DIR			= libft/
+#______________________________________________________________________________#
+############################### Compiler #######################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-#Sub-Directories, Server, Client
-SV_SRCS_DIR			= $(SRCS_DIR)server/
-CL_SRCS_DIR			= $(SRCS_DIR)client/
-SV_OBJS_DIR			= $(OBJS_DIR)server/
-CL_OBJS_DIR			= $(OBJS_DIR)client/
+# Compiler	
+CC = cc
 
-#Flags, Libraries and Includes
-INCLUDES	= -I ./inc/
-CFLAGS		= -Wall -Werror -Wextra
-LIBFT		= $(LIB_DIR)libft.a
-LDFLAGS 	= -L $(LIB_DIR) -lft
+# Compiler Flags
+CFLAGS = -Wall -Wextra -Werror -g
 
-#Colors
-RESET		= \033[0;39m
-GRAY		= \033[0;90m
-RED			= \033[1;31m
-GREEN		= \033[1;32m
-YELLOW		= \033[0;93m
-BLUE		= \033[0;34m
-PURPLE		= \033[1;35m
-CYAN		= \033[0;96m
-WHITE		= \033[0;97m
+#______________________________________________________________________________#
+############################### Libraries ######################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-# Inverted, i.e. colored backgrounds
-IGREY		= \033[40m
-IRED		= \033[41m
-IGREEN		= \033[42m
-IYELLOW		= \033[43m
-IBLUE		= \033[44m
-IPURPLE		= \033[45m
-ICYAN		= \033[46m
-IWHITE		= \033[47m
+# Libft
+LIB_DIR		= ./libft
+LIBFT		= $(LIB_DIR)/libft.a
+LDFLAGS 	+= -L $(LIB_DIR) -lft
 
-#Counter
-COUNT_SV	= 0
-COUNT_CL	= 0
+#______________________________________________________________________________#
+############################### Print Variables ################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-#---------------------------------------------------------------------------------
-#Do not edit below this line
-#---------------------------------------------------------------------------------
+# Reset
+NC = \033[0m
 
-#---------------------------------------------------------------------------------
-#Source and object files
-SV_SRCS		= $(wildcard $(SV_SRCS_DIR)*.c)
-CL_SRCS		= $(wildcard $(CL_SRCS_DIR)*.c)
+# Colors
+YELLOW = \033[0;33m
+GREEN = \033[0;32m
+BLUE = \033[0;34m
+RED = \033[0;31m
+PURPLE = \033[0;35m
+CYAN = \033[0;36m
+BLACK = \033[0;30
+WHITE = \033[0;37m
 
-#Object files
-SV_OBJS		= $(addprefix $(SV_OBJS_DIR), $(notdir $(SV_SRCS:.c=.o)))
-CL_OBJS		= $(addprefix $(CL_OBJS_DIR), $(notdir $(CL_SRCS:.c=.o)))
+# Colors
+BYELLOW = \033[1;33m
+BGREEN = \033[1;32m
+BBLUE = \033[1;34m
+BRED = \033[1;31m
+BPURPLE = \033[1;35m
+BCYAN = \033[1;36m
+BBLACK = \033[1;30m
+BWHITE = \033[1;37m
 
-#---------------------------------------------------------------------------------
+# One Line Output
+OL =\e[1A\r\033[K
 
-#Default Make
-all: $(LIBFT) dir $(SERVER) $(CLIENT)
+#______________________________________________________________________________#
+############################### Includes #######################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
-#Compile Server files
-$(SERVER): $(SV_OBJS)
-	@$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
-	@echo "]"
-	@echo "$(GREEN)./server created ->$(RESET)"
-	@echo "$(COUNT_SV) files compiled"
-	@echo "____________________\n"
+INC_DIR = ./inc
+INCLUDES += -I $(INC_DIR)
+INCLUDES += -I $(LIB_DIR)/inc
 
-$(SV_OBJS_DIR)%.o: $(SV_SRCS_DIR)%.c
-	@if [ $(COUNT_SV) = 0 ]; then echo -n "$(GREEN)Compiling Server files$(RESET)\n["; fi
-	@echo -n "$(YELLOW)$(IGREY).$(RESET)"
-	@$(CC) $(CFLAGS) $(INCLUDES) -c  $< -o $@
-	@$(eval COUNT_SV=$(shell echo $$(($(COUNT_SV)+1))))
+#______________________________________________________________________________#
+############################### Headers ########################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
 
+HEADER += so_long.h
+
+vpath %.h $(INC_DIR)
+
+#______________________________________________________________________________#
+############################### Path Sources ###################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+PATH_SRV = ./srcs/server
+PATH_CLT = ./srcs/client
+
+#______________________________________________________________________________#
+############################### Sources ########################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+SRCS_SRV += server.c
+SRCS_CLT += client.c
+
+#______________________________________________________________________________#
+############################### Attribution ####################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+vpath %.c $(PATH_SRV)
+vpath %.c $(PATH_CLT)
+
+#______________________________________________________________________________#
+############################### Objects ########################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+OBJS_DIR = ./objs
+OBJS_SRV = $(patsubst %.c, $(OBJS_DIR)/%.o, $(SRCS_SRV))
+OBJS_CLT = $(patsubst %.c, $(OBJS_DIR)/%.o, $(SRCS_CLT))
+OBJS = $(OBJS_SRV) $(OBJS_CLT)
+
+
+#______________________________________________________________________________#
+############################### Counter ########################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+TOTAL	= $(words $(SRCS_SRV)+ $(words $(SRCS_CLT)))
+COUNT	= 0
+
+#______________________________________________________________________________#
+############################### Rules ##########################################
+#‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾#
+
+#_____Build_____#
+all: $(SERVER) $(CLIENT)
+	@echo "--▶ $(BGREEN)all\t$(GREEN)done$(NC)"
+	@echo "--------------------------------------------------"
+
+$(SERVER): $(LIBFT) $(OBJS)
+	@$(CC) $(CFLAGS) $(OBJS_SRV) $(LDFLAGS) $(INCLUDES) -o $@
+    #-----Output-----#
+	@echo "▶$(BGREEN)$(SERVER)\t$(GREEN)Executable created$(NC)"
+
+$(CLIENT): $(LIBFT) $(OBJS)
+	@$(CC) $(CFLAGS) $(OBJS_CLT) $(LDFLAGS) $(INCLUDES) -o $@
+    #-----Output-----#
+	@echo "▶$(BGREEN)$(CLIENT)\t$(GREEN)Executable created$(NC)"
+
+$(OBJS): $(OBJS_DIR)/%.o: %.c | $(LIBFT) $(OBJS_DIR) where
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+    #-----Output-----#
+	@if [ $(COUNT) = 0 ]; then echo ""; fi
+	@$(eval COUNT=$(shell echo $$(($(COUNT)+1))))
+	@$(eval PERCENT:=$(shell echo $$((100*$(COUNT)/$(TOTAL)))))
+	@printf "$(OL)$(BCYAN)[%2d/%2d] %3d%%\t$(CYAN)Compiling %s$(NC)\n" $(COUNT) $(TOTAL) $(PERCENT) $<
+
+# Libraries
 $(LIBFT):
 	@make --no-print-directory all -C $(LIB_DIR)
 
-#Compile Client files
-$(CLIENT): $(CL_OBJS)
-	@$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
-	@echo "]"
-	@echo "$(GREEN)./client created ->$(RESET)"
-	@echo "$(COUNT_CL) files compiled"
-	@echo "____________________\n"
-
-$(CL_OBJS_DIR)%.o: $(CL_SRCS_DIR)%.c
-	@if [ $(COUNT_CL) = 0 ]; then echo -n "$(GREEN)Compiling Client files$(RESET)\n["; fi
-	@echo -n "$(YELLOW)$(IGREY).$(RESET)"
-	@$(CC) $(CFLAGS) $(INCLUDES) -c  $< -o $@
-	@$(eval COUNT_CL=$(shell echo $$(($(COUNT_CL)+1))))
-
-#Directories
-dir: $(OBJS_DIR) $(SV_OBJS_DIR) $(CL_OBJS_DIR)
-
+# Directories
 $(OBJS_DIR):
-	@mkdir -p $(OBJS_DIR)
+	@mkdir $@
 
-$(SV_OBJS_DIR):
-	@mkdir -p $(SV_OBJS_DIR)
+bonus: all
 
-$(CL_OBJS_DIR):
-	@mkdir -p $(CL_OBJS_DIR)
-
-#Clean only Object files
-clean:
+#_____Clean_____#
+clean: lclean where_c
 	@rm -rf $(OBJS_DIR)
+    #-----Output-----#
+	@echo "▶ $(BYELLOW)clean $(YELLOW)Object files removed from $(PROJECT_NAME)$(NC)"
+	@echo "--▶ $(BYELLOW)clean$(YELLOW) done$(NC)"
+
+# Libraries Clean
+lclean:
 	@make --no-print-directory clean -C $(LIB_DIR)
 
-#Full Clean, Object and Binary files
 fclean: clean
-	@rm -f $(SERVER)
-	@rm -f $(CLIENT)
 	@rm -f $(LIBFT)
+	@rm -f $(SERVER) $(CLIENT)
+    #-----Output-----#
+	@echo "▶ $(BRED)fclean $(RED)libft.a removed$(NC)"
+	@echo "\t$(RED)$(SERVER) $(CLIENT) removed$(NC)"
+	@echo "--▶ $(BRED)fclean$(RED) done$(NC)"
 
-#Remake
+# Current Make
+where_c:
+	@echo "$(BBLACK)>$(PROJECT_NAME)$(NC)"
+
+where:
+	@echo "$(BBLACK)>$(PROJECT_NAME)$(NC)"
+
 re: fclean all
 
-#Non-File Targets
-.PHONY: all bonus clean fclean re
+.PHONY: all clean fclean re

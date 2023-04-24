@@ -6,7 +6,7 @@
 /*   By: maaliber <maaliber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/29 14:16:10 by maaliber          #+#    #+#             */
-/*   Updated: 2023/02/02 15:36:28 by maaliber         ###   ########.fr       */
+/*   Updated: 2023/04/17 16:14:47 by maaliber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,11 @@ t_lst_arg	*ft_lstnew_arg(t_arg_spec *spec)
 {
 	t_lst_arg	*new_arg;
 
+	if (!spec)
+		return (NULL);
 	new_arg = malloc(sizeof(t_lst_arg));
-	if (!new_arg || !spec)
-		return (free(new_arg), NULL);
+	if (!new_arg)
+		return (NULL);
 	new_arg->spec = spec;
 	new_arg->next = NULL;
 	return (new_arg);

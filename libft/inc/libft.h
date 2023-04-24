@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <stdint.h>
 # include <stdarg.h>
+# include <string.h>
 
 # define BRED	"\033[1m\033[31m"      /* Bold Red */
 # define BWHITE	"\033[1m\033[37m"      /* Bold White */
@@ -59,6 +60,7 @@ char		*ft_strdup(const char *src);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		*ft_strtrim(char const *s1, char const *set);
+void		free_tab(char **tab);
 char		**ft_split(char const *s, char c);
 size_t		ft_nblen(long long n);
 char		*ft_itoa(int n);
@@ -111,7 +113,7 @@ typedef struct s_param
 
 typedef struct s_arg_spec
 {
-	struct s_param		*param;
+	struct s_param		param;
 	int					type;
 	int					size;
 }	t_arg_spec;
@@ -128,7 +130,7 @@ typedef struct s_output
 	ssize_t	size;
 }	t_output;
 
-/*Functions for list - used in Parsing functions*/
+/*Function for list - used in Parsing functions*/
 void		del_arg(t_arg_spec *spec);
 t_lst_arg	*ft_lstnew_arg(t_arg_spec *spec);
 t_lst_arg	*ft_lstlast_arg(t_lst_arg *lst);
@@ -139,8 +141,8 @@ void		ft_lstclear_arg(t_lst_arg **lst);
 /*Utilised functions - Used functions*/
 char		*ft_strjoin_free(char *s1, char *s2);
 void		*ft_setalloc(size_t size, char c, int null_terminated);
-char		*ft_strinsert(char const *s, char const *to_ins, size_t pos);
-char		*ft_strinsert_free(char const *s, char const *to_ins, size_t pos);
+char		*ft_strinsert(char *s, char *to_ins, size_t pos);
+char		*ft_strinsert_free(char *s, char *to_ins, size_t pos);
 
 /*Parsing functions - used in Main functions*/
 int			atoi_printf(const char *nstr, t_arg_spec *spec);
@@ -150,7 +152,7 @@ t_arg_spec	*init_arg(const char *fmt);
 t_lst_arg	*ft_parse_format(const char *fmt);
 
 /*Error functions*/
-void		err_msg_ptf(char *msg, int c);
+void		err_msg(char *msg, int c);
 int			flag_comp_err(t_arg_spec *spec);
 void		flag_err_msg(int errno);
 int			flag_error(t_arg_spec *spec);
@@ -184,7 +186,6 @@ void		p_uphex(t_output *output, va_list ap);
 void		p_pct(t_output *output, va_list ap);
 
 /*Output functions - used in Main functions*/
-t_output	*init_output(void);
 void		spec_mod(t_output *output, t_arg_spec *spec);
 ssize_t		write_arg(va_list ap, t_arg_spec *spec);
 ssize_t		ft_output(const char *fmt, va_list ap, t_lst_arg *arg_list);

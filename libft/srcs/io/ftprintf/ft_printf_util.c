@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fr_printf_util.c                                   :+:      :+:    :+:   */
+/*   printf_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maaliber <maaliber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 14:53:01 by maaliber          #+#    #+#             */
-/*   Updated: 2023/02/02 15:36:38 by maaliber         ###   ########.fr       */
+/*   Updated: 2023/04/17 16:14:47 by maaliber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	del_arg(t_arg_spec *spec)
 {
-	free(spec->param);
-	spec->param = NULL;
 	free(spec);
 	return ;
 }
@@ -48,22 +46,18 @@ void	*ft_setalloc(size_t size, char c, int null_terminated)
 	return (arr);
 }
 
-char	*ft_strinsert(char const *s, char const *to_insert, size_t pos)
+char	*ft_strinsert(char *s, char *to_insert, size_t pos)
 {
 	char	*rst;
 	size_t	len;
 	size_t	i;
 
 	len = ft_strlen(s);
-	if (pos == 0)
-		return (ft_strjoin(to_insert, s));
-	if (pos > len)
-		return (ft_strjoin(s, to_insert));
 	rst = malloc(len + ft_strlen(to_insert) + 1);
 	if (!rst)
 		return (NULL);
 	i = 0;
-	while (i < pos)
+	while (i < pos && *s)
 		rst[i++] = *s++;
 	while (*to_insert)
 		rst[i++] = *to_insert++;
@@ -73,12 +67,16 @@ char	*ft_strinsert(char const *s, char const *to_insert, size_t pos)
 	return (rst);
 }
 
-char	*ft_strinsert_free(char const *s, char const *to_insert, size_t pos)
+char	*ft_strinsert_free(char *s, char *to_insert, size_t pos)
 {
 	char	*rst;
 
+	if (!s)
+		return (NULL);
+	if (!to_insert)
+		return (s);
 	rst = ft_strinsert(s, to_insert, pos);
-	free((void *)s);
-	free((void *)to_insert);
+	free(s);
+	free(to_insert);
 	return (rst);
 }

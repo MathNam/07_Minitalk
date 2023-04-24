@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_format.c                                     :+:      :+:    :+:   */
+/*   ft_parse_format.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maaliber <maaliber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/29 16:38:38 by maaliber          #+#    #+#             */
-/*   Updated: 2023/02/02 15:36:28 by maaliber         ###   ########.fr       */
+/*   Updated: 2023/04/17 16:14:47 by maaliber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,19 @@ const char	*find_next_fmt(const char *format)
 int	init_option(t_arg_spec	*spec, const char *fmt)
 {
 	fmt++;
-	spec->param = malloc(sizeof(t_param));
-	if (!(spec->param))
-		return (0);
-	spec->param->left = 0;
-	spec->param->padded = 0;
-	spec->param->showsign = 0;
-	spec->param->space = 0;
-	spec->param->alt = 0;
+	spec->param.prec = -1;
 	while (ft_ischarset(*(fmt), "-0+ #"))
 	{
 		if (*fmt == '-')
-			spec->param->left++;
+			spec->param.left++;
 		else if (*fmt == '0')
-			spec->param->padded++;
+			spec->param.padded++;
 		else if (*fmt == '+')
-			spec->param->showsign++;
+			spec->param.showsign++;
 		else if (*fmt == ' ')
-			spec->param->space++;
+			spec->param.space++;
 		else if (*fmt == '#')
-			spec->param->alt++;
+			spec->param.alt++;
 		spec->size++;
 		fmt++;
 	}
@@ -63,20 +56,18 @@ t_arg_spec	*init_arg(const char *fmt)
 {
 	t_arg_spec	*spec;
 
-	spec = malloc(sizeof(t_arg_spec));
+	spec = ft_calloc(1, sizeof(t_arg_spec));
 	if (!spec)
 		return (NULL);
 	spec->size = 1;
 	if (!init_option(spec, fmt))
 		return (free(spec), NULL);
-	spec->param->width = atoi_printf(fmt + spec->size, spec);
+	spec->param.width = atoi_printf(fmt + spec->size, spec);
 	if (*(fmt + spec->size) == '.')
 	{
 		spec->size++;
-		spec->param->prec = atoi_printf(fmt + spec->size, spec);
+		spec->param.prec = atoi_printf(fmt + spec->size, spec);
 	}
-	else
-		spec->param->prec = -1;
 	spec->type = *(fmt + spec->size++);
 	return (spec);
 }
@@ -84,6 +75,7 @@ t_arg_spec	*init_arg(const char *fmt)
 t_lst_arg	*ft_parse_format(const char *fmt)
 {
 	t_lst_arg	*arg_list;
+	t_lst_arg	*arg;
 	t_arg_spec	*spec;
 	const char	*f = (const char *) fmt;
 
@@ -92,7 +84,12 @@ t_lst_arg	*ft_parse_format(const char *fmt)
 	while (f)
 	{
 		spec = init_arg(f);
-		ft_lstadd_back_arg(&arg_list, ft_lstnew_arg(spec));
+		if (!spec)
+			return (ft_lstclear_arg(&arg_list), NULL);
+		arg = ft_lstnew_arg(spec);
+		if (!arg)
+			return (ft_lstclear_arg(&arg_list), free(spec), NULL);
+		ft_lstadd_back_arg(&arg_list, arg);
 		f = find_next_fmt(f + spec->size);
 	}
 	return (arg_list);
